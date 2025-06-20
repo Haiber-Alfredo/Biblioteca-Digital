@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>📘 Biblioteca Matemática</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pi-symbol.svg/32px-Pi-symbol.svg.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #1e1e2f;
+            color: #ecf0f1;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #121223;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        nav h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #00bcd4;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+
+        nav a:hover {
+            color: #4dd0e1;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00bcd4;
+        }
+
+        form {
+            background: #282c34;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        input[type="file"], input[type="text"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: calc(50% - 10px);
+            border-radius: 6px;
+            border: none;
+            background-color: #444;
+            color: #fff;
+        }
+
+        #busqueda {
+            margin: 0 auto 30px;
+            max-width: 700px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #busqueda input {
+            width: 70%;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
+
+        #busqueda button {
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #busqueda button:hover {
+            background-color: #0097a7;
+        }
+
+        button {
+            background-color: #00bcd4;
+            color: #fff;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0097a7;
+        }
+
+        .categoria {
+            background: #2d2f40;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .categoria h3 {
+            margin-top: 0;
+            color: #ffd54f;
+        }
+
+        ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+
+        li a {
+            text-decoration: none;
+            color: #80cbc4;
+            display: inline-block;
+            padding: 5px 0;
+        }
+
+        li button {
+            margin-left: 10px;
+            font-size: 12px;
+            background-color: #607d8b;
+        }
+
+        li button:hover {
+            background-color: #455a64;
+        }
+
+        #cerrar {
+            display: none;
+            margin: 20px auto;
+            background-color: #e53935;
+        }
+
+        #visor {
+            display: none;
+            width: 100%;
+            height: 600px;
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #00bcd4;
+            border-radius: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            input[type="file"], input[type="text"] {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            #visor {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>π Biblioteca Matemática</h1>
+        <div>
+            <a href="#upload">Subir Libro</a>
+            <a href="#categorias">Categorías</a>
+        </div>
+    </nav>
+    <main>
+        <form id="upload" method="POST" action="/upload" enctype="multipart/form-data">
+            <label><strong>➕ Subir nuevo libro matemático:</strong></label><br>
+            <input type="file" name="libro" required>
+            <input type="text" name="categoria" placeholder="Ej: Álgebra, Análisis" required>
+            <button type="submit">Subir</button>
+        </form>
+
+        <div id="busqueda">
+            <input type="text" id="filtro" placeholder="Buscar por nombre de libro...">
+            <button onclick="filtrarLibros()">🔍 Buscar</button>
+        </div>
+
+        <h2 id="categorias">📂 Categorías y libros</h2>
+
+        {% for categoria, libros in categorias.items() %}
+            <div class="categoria">
+                <h3>📚 {{ categoria }}</h3>
+                <ul>
+                    {% for libro in libros %}
+                        <li>
+                            <a href="#" onclick="verPDF('{{ url_for('ver_pdf', categoria=categoria, archivo=libro) }}')">
+                                📄 {{ libro }}
+                            </a>
+                            <button onclick="window.open('{{ url_for('descargar', categoria=categoria, archivo=libro) }}', '_blank')">⬇️ Descargar</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+
+        <div style="text-align: center;">
+            <button id="cerrar" onclick="cerrarPDF()">❌ Cerrar visor</button>
+        </div>
+
+        <div id="visor">
+            <iframe id="pdfFrame" src=""></iframe>
+        </div>
+    </main>
+
+    <script>
+        function verPDF(url) {
+            document.getElementById('pdfFrame').src = url;
+            document.getElementById('visor').style.display = 'block';
+            document.getElementById('cerrar').style.display = 'inline-block';
+        }
+
+        function cerrarPDF() {
+            document.getElementById('pdfFrame').src = "";
+            document.getElementById('visor').style.display = 'none';
+            document.getElementById('cerrar').style.display = 'none';
+        }
+
+        function filtrarLibros() {
+            const filtro = document.getElementById('filtro').value.toLowerCase();
+            const secciones = document.querySelectorAll('.categoria');
+
+            secciones.forEach(seccion => {
+                const libros = seccion.querySelectorAll('li');
+                let visible = false;
+                libros.forEach(libro => {
+                    const texto = libro.textContent.toLowerCase();
+                    const coincide = texto.includes(filtro);
+                    libro.style.display = coincide ? '' : 'none';
+                    if (coincide) visible = true;
+                });
+                seccion.style.display = visible ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
